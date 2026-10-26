@@ -705,7 +705,8 @@
 	flex-shrink: 0;
 	margin: 0;
 }
-	</style>
+	.extra-help { scroll-margin-top: 20px; }
+</style>
 </head>
 <body>
 	<header>
@@ -747,6 +748,9 @@
 	</div>
 
 	<div class="side-body">
+        <a href="#extra-help" id="extra-help-link"><img src="https://i.ibb.co/cS9RsL59/questions.png" alt="">
+			<b>new to mods?</b> </a>
+
 		<a href="https://www.patreon.com/posts/midnitetech-121729961"
 		   rel="noopener" target="_blank">
 			<img src="https://i.ibb.co/ZZtpnM6/MODLIB.png" alt="">
@@ -941,7 +945,7 @@
 
 <div class="fields"><label class="field">OS<select id="f-platform">${['Windows','Mac','Console'].map(p=>`<option ${state.platform===p?'selected':''}>${p}<\/option>`).join('')}<\/select><\/label><\/div><div id="console-note" class="note ${state.platform==='Console'?'':'hidden'}">Downloaded .package and .ts4script mods need the PC or Mac version of The Sims 4. They cannot be installed on PlayStation or Xbox.<\/div><div class="actions"><button class="primary" id="next" ${!state.issue||state.platform==='Console'?'disabled':''}>Next →<\/button><\/div>`;
 	} else if(state.step===1){
-	html=`<h2 id="panel-title" tabindex="-1">${r.heading}<\/h2><p class="lead">Try these in order. Check each one you’ve tried. Skip anything that doesn’t apply.<\/p>${checkSections(r)}${r.extra?`<p>${r.extra}<\/p>`:''}<section class="extra-help"><h3>Extra Help<\/h3>${basics()}<\/section>${actions('Now Test It →')}`;
+	html=`<h2 id="panel-title" tabindex="-1">${r.heading}<\/h2><p class="lead">Try these in order. Check each one you’ve tried. Skip anything that doesn’t apply.<\/p>${checkSections(r)}${r.extra?`<p>${r.extra}<\/p>`:''}<section class="extra-help" id="extra-help" tabindex="-1"><h3>Extra Help<\/h3>${basics()}<\/section>${actions('Now Test It →')}`;
 	} else if(state.step===2){
 	html=`<h2 id="panel-title" tabindex="-1">Try It in the Game<\/h2><div class="note"><strong>Protect Your Save:<\/strong> Back up before removing mods. Use <b>New Game<\/b> for tests. Don’t save your usual household while its mods or custom content are missing.<\/div>${protection()}<div class="advice"><p>${r.test}<\/p><\/div><p>Did the quick fixes solve it?<\/p><div class="test-actions">${[['fixed','Yes, It Works'],['persists','No, Still Broken'],['untested','I Can’t Test Yet']].map(([id,label])=>`<button class="secondary" data-result="${id}">${label}<\/button>`).join('')}<\/div><div class="actions"><button class="secondary" id="back">← Back<\/button><\/div>`;
 	} else {
@@ -990,6 +994,16 @@ if ($('#general-fixes')) {
 	let dark=false;try{dark=localStorage.getItem('mt-theme')==='dark';}catch{}
 	function theme(){document.body.classList.toggle('dark',dark);$('#theme').setAttribute('aria-pressed',String(dark));}
 	theme();$('#theme').onclick=()=>{dark=!dark;theme();try{localStorage.setItem('mt-theme',dark?'dark':'light');}catch{}};
+    $('#extra-help-link').onclick = (event) => {
+        event.preventDefault();
+        save();
+        if (!state.issue) state.issue = 'missing';
+        state.step = 1;
+        render();
+        const section = $('#extra-help');
+        section.focus({ preventScroll: true });
+        section.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    };
 	render();
 	</script>
 </body>
