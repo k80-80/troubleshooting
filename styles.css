@@ -19,8 +19,9 @@
 }
 
 #modlibrary-help-link {
-  display: inline-block;
-  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 	     * {
 	       box-sizing: border-box;
