@@ -408,6 +408,7 @@
 	       display: block;
 	     }
 	     input[type="text"],
+	     input[type="email"],
 	     select,
 	     textarea {
 	       display: block;
@@ -760,3 +761,29 @@ body.dark .primary { background:#365c6c; }
 .site-footer .footer-disclaimer { max-width:750px; margin:12px auto 0; font-size:11px; opacity:0.8; }
 code, .check code, .report { font-family:"Courier New",monospace; }
 @media(max-width:800px) { .layout {padding:5px 18px 30px;} .resources {margin:0 18px;} }
+
+/* Guide cards automatically wrap as more guides are added. */
+.available-guides, .known-problem { margin-top:28px; padding-top:22px; border-top:1px solid var(--line); }
+.guide-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr)); gap:12px; }
+.guide-card { display:flex; flex-direction:column; gap:10px; padding:18px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--text); text-decoration:none; }
+.guide-card:hover { background:var(--pale); }
+.guide-card span { color:var(--muted); font-size:12px; }
+.guide-card:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+.known-problem textarea { min-height:130px; }
+
+.upload-report { margin:22px 0; padding:18px; border:1px solid var(--line); border-radius:8px; background:var(--pale); }
+.upload-report .field { margin-bottom:14px; }
+.upload-list { overflow-wrap:anywhere; padding-left:20px; }
+.upload-missing { display:flex; align-items:flex-start; gap:8px; margin:14px 0; }
+.upload-missing input { flex-shrink:0; margin-top:3px; }
+
+.upload-report .field > input[type="email"], .upload-report .field > input[type="file"] { margin-top:10px; }
+
+.upload-report .field > input[type="text"] { margin-top:10px; }
+
+.upload-report .field > input[type="file"] { display:block; width:100%; margin-top:10px; }
+
+.icon-heading { display:flex; align-items:center; gap:10px; }
+.icon-heading img, .guide-icon { object-fit:contain; flex-shrink:0; }
+
+.upload-report .attachment-guidance, .upload-report .upload-missing { font-size:12px; line-height:1.6; }
