@@ -275,3 +275,44 @@ document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>go(+b.dataset.
         section.scrollIntoView({ block: 'start', behavior: 'smooth' });
     };
 	render();
+
+const translateToggle = document.getElementById('translate-toggle');
+const translateHelp = document.getElementById('translate-help');
+
+if (translateToggle && translateHelp) {
+  function closeTranslateHelp() {
+    translateHelp.hidden = true;
+    translateToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  translateToggle.addEventListener('click', event => {
+    event.stopPropagation();
+    translateHelp.hidden = !translateHelp.hidden;
+    translateToggle.setAttribute('aria-expanded', String(!translateHelp.hidden));
+  });
+
+  document.addEventListener('click', event => {
+    if (!translateHelp.hidden && !translateHelp.contains(event.target)) {
+      closeTranslateHelp();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !translateHelp.hidden) {
+      closeTranslateHelp();
+      translateToggle.focus();
+    }
+  });
+}
+
+function markNoTranslate() {
+  document.querySelectorAll('code, .site-logo, .report, input, textarea').forEach(element => {
+    if (element.getAttribute('translate') !== 'no') {
+      element.setAttribute('translate', 'no');
+      element.classList.add('notranslate');
+    }
+  });
+}
+
+markNoTranslate();
+new MutationObserver(markNoTranslate).observe(document.body, { childList: true, subtree: true });
