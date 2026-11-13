@@ -50,7 +50,7 @@
 	const knownTypes = {
 	  typo:{name:'Typo', prompt:'Where is the typo, and what should it say?', help:'Include the exact text, where you saw it, and your suggested correction. Attach a screenshot if helpful.'},
 	  conflict:{name:'Mod Conflict', prompt:'Which mods conflict, and how did you confirm it?', help:'Include both mod names, creators and versions, what happens, and whether it works with each mod separately. Attach relevant screenshots or logs.'},
-	  error:{name:'lastException / Error', prompt:'What were you doing when the error appeared?', help:'Include the steps that trigger the error and any message shown. Attach your lastException or Better Exceptions report to your support message. For my mods, use the separate Send a ModLibrary Log card if you also need to generate a log.'},
+	  error:{name:'lastException / Error', prompt:'What were you doing when the error appeared?', help:'Include the steps that trigger the error and any message shown. Attach your lastException or Better Exceptions report to your support message.'},
 	  other:{name:'Other', prompt:'What is the problem, and what should happen instead?', help:'Include where it happens, how to reproduce it, and any testing you have already done. Attach relevant screenshots or logs.'}
 	};
 	const knownReport = {type:'typo', mod:'', version:'', game:'', details:''};
@@ -77,24 +77,17 @@
 	}
 
 const basinEndpoint = 'https://usebasin.com/f/661063b0f584';
-const uploads = {known:{name:'',email:'',files:[],missing:false,busy:false},support:{name:'',email:'',files:[],missing:false,busy:false}};
-function uploadFields(key){const d=uploads[key];return `<div class="upload-report"><label class="field">Your Name<input type="text" id="${key}-name" autocomplete="name" value="${esc(d.name)}"></label><label class="field">Your Email (so I can reply)<input type="email" id="${key}-email" autocomplete="email" required value="${esc(d.email)}"></label><h4 class="icon-heading"><img src="TS_icons/modrequirements.png" alt="" width="32" height="32">Files to Attach</h4><ul class="attachment-guidance"><li>Any <b>lastException</b>, <b>MCCC</b>, and/or <b>Better Exceptions</b> reports</li><li>midnitetech_log.html</li><li>midnitetech_settings.json (For AnyShift or Custom Uniforms)</li></ul><p><a href="#modlibrary-help" id="${key}-log-guide">How to Create a midnitetech_log</a></p><label class="field">Attach Files<input type="file" id="${key}-files" multiple accept=".txt,.log,.html,.htm,.json,.png,.jpg,.jpeg" aria-describedby="${key}-file-help"></label><p class="hint" id="${key}-file-help">Add files one at a time or select several. TXT, LOG, HTML, JSON, PNG or JPG; up to 10 MB.</p><ul id="${key}-file-list" class="upload-list"></ul><label class="upload-missing"><input type="checkbox" id="${key}-missing" ${d.missing?'checked':''}> I don’t have a relevant file or can’t find it.</label><p class="hint">Your report and selected files will be sent directly to midnitetech. Files stay selected while you navigate this page; reloading clears them.</p><button type="button" class="primary" id="${key}-send">${d.busy?'Sending…':'Send Report'}</button><p id="${key}-send-status" role="status" aria-live="polite"></p></div>`;}
+const uploads = {known:{name:'',email:'',files:[],busy:false},support:{name:'',email:'',files:[],busy:false}};
+function logGuide(key){return `<details id="${key}-log-guide"><summary>How to Create Your ModLibrary Log<\/summary><p>With my current ModLibrary installed and Script Mods Allowed enabled, open the in-game cheat box: <b>Ctrl + Shift + C<\/b> on Windows; <b>Command + Shift + C<\/b> on Mac. Type this and press Enter:<\/p><div class="command"><code>mtlog<\/code><button class="quiet" id="${key}-copy-command" type="button">Copy Command<\/button><\/div><p>Follow the file location shown in game. Attach <code>midnitetech_log.html<\/code> to your support message, along with any Better Exception files, lastExceptions etc. For AnyShift or Custom Uniforms, also attach <code>midnitetech_settings.json<\/code> if available.<\/p><p>Command not working? Check you have the latest ModLibrary, that script mods are enabled, and that the .ts4script file is no more than one folder inside Mods. Restart after changes. ${library}.<\/p><\/details>`;}
+function uploadFields(key){const d=uploads[key];return `<div class="upload-report"><label class="field">Your Name<input type="text" id="${key}-name" autocomplete="name" value="${esc(d.name)}"></label><label class="field">Your Email (so I can reply)<input type="email" id="${key}-email" autocomplete="email" required value="${esc(d.email)}"></label><h4 class="icon-heading"><img src="TS_icons/modrequirements.png" alt="" width="32" height="32">Files to Attach</h4><ul class="attachment-guidance"><li>Any <b>lastException</b>, <b>MCCC</b>, and/or <b>Better Exceptions</b> reports</li><li><b>midnitetech_log.html (required)</b></li><li>midnitetech_settings.json (For AnyShift or Custom Uniforms)</li></ul>${logGuide(key)}<label class="field">Attach Files<input type="file" id="${key}-files" multiple accept=".txt,.log,.html,.htm,.json,.png,.jpg,.jpeg" aria-describedby="${key}-file-help"></label><p class="hint" id="${key}-file-help">Add files one at a time or select several. TXT, LOG, HTML, JSON, PNG or JPG; up to 10 MB.</p><ul id="${key}-file-list" class="upload-list"></ul><p class="hint">Your report and selected files will be sent directly to midnitetech. Files stay selected while you navigate this page; reloading clears them.</p><button type="button" class="primary" id="${key}-send">${d.busy?'Sending…':'Send Report'}</button><p id="${key}-send-status" role="status" aria-live="polite"></p></div>`;}
 function bindUpload(key,summary){
  const d=uploads[key], email=$('#'+key+'-email');if(!email)return;
  const status=$('#'+key+'-send-status'),button=$('#'+key+'-send');
  const paint=()=>{const list=$('#'+key+'-file-list');list.replaceChildren();d.files.forEach((f,i)=>{const li=document.createElement('li');li.textContent=f.name+' ';const remove=document.createElement('button');remove.type='button';remove.className='quiet';remove.textContent='Remove';remove.setAttribute('aria-label','Remove '+f.name);remove.onclick=()=>{d.files.splice(i,1);paint();};li.append(remove);list.append(li);});};
  paint();button.disabled=d.busy;
- $('#'+key+'-log-guide').onclick=event=>{
-  event.preventDefault();
-  if(!$('#modlibrary-help')){
-   save();state.issue='missing';state.result='untested';state.step=3;render();
-  }
-  const section=$('#modlibrary-help');
-  if(section){section.open=true;section.querySelector('summary').focus();section.scrollIntoView({block:'start',behavior:'smooth'});}
- };
+ $('#'+key+'-copy-command').onclick=()=>copy('mtlog');
  $('#'+key+'-name').oninput=e=>{d.name=e.target.value;};
  email.oninput=()=>{d.email=email.value;};
- $('#'+key+'-missing').onchange=e=>{d.missing=e.target.checked;};
  $('#'+key+'-files').onchange=e=>{
   const files=[...d.files];for(const f of e.target.files){if(!files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))files.push(f);}
   const error=validateUploads(files);
@@ -108,8 +101,12 @@ function bindUpload(key,summary){
   const details=key==='known'?$('#known-details'):$('#f-details');
   if(!details.value.trim()){status.textContent='Please describe the problem before sending.';details.focus();return;}
   const error=validateUploads(d.files);if(error){status.textContent=error;return;}
-  if(!d.files.length&&!d.missing){status.textContent='Please attach the relevant files, or tick the option saying you don’t have them.';$('#'+key+'-files').focus();return;}
-  const data=new FormData();data.append('name',d.name);data.append('email',d.email);data.append('Report',summary());data.append('Files unavailable',d.missing?'Yes':'No');
+  if(!d.files.some(file=>file.name.toLowerCase()==='midnitetech_log.html' && file.size>0)){
+   status.textContent='Attach midnitetech_log.html before sending. Open the guide above for help creating it.';
+   $('#'+key+'-files').focus();
+   return;
+  }
+  const data=new FormData();data.append('name',d.name);data.append('email',d.email);data.append('Report',summary());
   for(const f of d.files)data.append('attachments[]',f,f.name);
   d.busy=true;button.disabled=true;button.textContent='Sending…';status.textContent='Sending your report and files…';
   try{
@@ -237,8 +234,8 @@ if ($(id)) {
     state.issue = 'missing';
     state.result = 'untested';
     go(3);
-    const section = $('#modlibrary-help');
-    if (section) section.open = false;
+    const section = $('#support-log-guide');
+    if (section) section.open = true;
   };
 }
 document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>go(+b.dataset.step));
@@ -255,11 +252,9 @@ document.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>go(+b.dataset.
 	for(const k of ['mod','game','details'])$('#f-'+k).oninput=()=>{save();$('#report').textContent=report();};
 
 	}
-	if($('#copy-command'))$('#copy-command').onclick=()=>copy('mtlog');
 	}
-	function support(){return `<h3 class="section-heading">Send Report<\/h3><p>Fill in the details here, attach the relevant files and click <b>Send Report</b>.<\/p><div class="fields"><label class="field">Mod Name (optional)<input type="text" id="f-mod" value="${esc(state.mod)}"><\/label><label class="field">Game Version (optional)<input type="text" id="f-game" value="${esc(state.game)}"><small>Bottom left of the game’s main menu, or just "latest"<\/small><\/label><label class="field wide">What Did You Try, and What Happened?<textarea id="f-details" placeholder="What did you click? What happened? Which mods were left in Mods during your test?">${esc(state.details)}<\/textarea><\/label><\/div>
-	${state.issue==='ui'?'<p>For broken menus or icons, include a screenshot and the names of your menu-changing mods. My ModLibrary log is not required for a menu-only issue.<\/p>':''}
-	${`<details id="modlibrary-help"><summary>How to Create a midnitetech_log<\/summary><p>With my current ModLibrary installed and Script Mods Allowed enabled, open the in-game cheat box: <b>Ctrl + Shift + C<\/b> on Windows; <b>Command + Shift + C<\/b> on Mac. Type this and press Enter:<\/p><div class="command"><code>mtlog<\/code><button class="quiet" id="copy-command">Copy Command<\/button><\/div><p>Follow the file location shown in game. Attach <code>midnitetech_log.html<\/code> to your support message, along with any Better Exception files, lastExceptions etc. For AnyShift or Custom Uniforms, also attach <code>midnitetech_settings.json<\/code> if available.<\/p><p>Command not working? Check you have the latest ModLibrary, that script mods are enabled, and that the .ts4script file is no more than one folder inside Mods. Restart after changes. ${library}. If you can’t create a log, let me know in the details below.<\/p><p><b>support@midnitetechmods.com<\/b><\/p><\/details>`}
+	function support(){return `<h3 class="section-heading">Send Report<\/h3><p>Fill in the details here, attach your ModLibrary log and click <b>Send Report</b>.<\/p><div class="fields"><label class="field">Mod Name (optional)<input type="text" id="f-mod" value="${esc(state.mod)}"><\/label><label class="field">Game Version (optional)<input type="text" id="f-game" value="${esc(state.game)}"><small>Bottom left of the game’s main menu, or just "latest"<\/small><\/label><label class="field wide">What Did You Try, and What Happened?<textarea id="f-details" placeholder="What did you click? What happened? Which mods were left in Mods during your test?">${esc(state.details)}<\/textarea><\/label><\/div>
+	${state.issue==='ui'?'<p>For broken menus or icons, include a screenshot and the names of your menu-changing mods.<\/p>':''}
 	<details><summary>Preview Your Support Summary<\/summary><pre class="report" id="report"><\/pre><\/details>${uploadFields('support')}<p class="hint">Keep this page open while testing; reloading starts over.<\/p>`;}
 	let dark=false;try{dark=localStorage.getItem('mt-theme')==='dark';}catch{}
 	function theme(){document.body.classList.toggle('dark',dark);$('#theme').setAttribute('aria-pressed',String(dark));$('#theme').textContent=dark?'☀ Light Mode':'◐ Dark Mode';}
