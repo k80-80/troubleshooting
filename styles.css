@@ -1,5 +1,5 @@
 :root {
-	       --font-main: "SimsHeadline", Arial, sans-serif;
+	       --font-main: "Electronic Arts Text", Arial, sans-serif;
 	       color-scheme: light;
 	       --bg: #f8f7f3;
 	       --paper: #fffefa;
@@ -735,7 +735,17 @@ body.dark {
   --muted: #afc3cb; --line: #40555e; --blue: #a8c4e8;
   --deep: #bed8e1; --pale: #293e48; --gold: #293e48;
 }
-body * { font-family: "SimsHeadline", Arial, sans-serif; }
+h1, h2, h3, h4, h5, h6,
+.eyebrow,
+.side-title,
+.panel-bar,
+.issue strong,
+.section-heading,
+.mod-help-heading,
+.mod-log-heading,
+summary {
+  font-family: "SimsHeadline", Arial, sans-serif;
+}
 .masthead { position: relative; padding: 22px 30px 65px; background: var(--bg); }
 .masthead .brand { display: block; max-width:1120px; width:100%; margin:0 auto; text-align:center; }
 .site-logo { display:block; width:1000px; max-width:100%; height:auto; margin:0 auto; }
